@@ -1,0 +1,105 @@
+﻿@model CW2.Models.CustomerViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Customer</h1>
+
+    @Html.ActionLink("Edit", "Edit", new { id = Model.CustomerId }, new { @class = "btn btn-danger px-3 py-2", @style = "font-weight: bold; color: white;" })
+</div>
+
+<div class="container-xl px-4 mt-4">
+    <hr class="mt-0 mb-4">
+    <div class="row">
+        <div class="col-xl-4">
+            <!-- Profile picture card-->
+            <div class="card mb-4 mb-xl-0">
+                <div class="card-header">Profile Picture</div>
+                <div class="card-body text-center">
+                    <!-- Profile picture image-->
+                    @if (Model.ProfilePic != null && Model.ProfilePic.Length > 0)
+                    {
+                        <img src="@Url.Action("GetImage", "Customer", new { id = Model.CustomerId })" class="img-account-profile rounded-circle mb-2" title="Profile photo" width="160" height="160" />
+                    }
+                    else
+                    {
+                        <img src="@Url.Content("~/Content/imgs/defaultProfilePic.jpg")" class="img-account-profile rounded-circle mb-2" title="Profile photo" width="160" height="160" />
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-8">
+            <!-- Account details card-->
+            <div class="card mb-4">
+                <div class="card-header">Account Details</div>
+                <div class="card-body">
+                    <form>
+                        <div class="row gx-3 mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="FirstName" class="small mb-1"></label>
+                                <input asp-for="FirstName" class="form-control" disabled />
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="LastName" class="small mb-1"></label>
+                                <input asp-for="LastName" class="form-control" disabled />
+                            </div>
+                        </div>
+
+                        <div class="row gx-3 mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Login" class="small mb-1"></label>
+                                <input asp-for="Login" class="form-control" disabled />
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="PasswordHash" class="small mb-1"></label>
+                                <input type="password" class="form-control" value="********" disabled />
+                            </div>
+                        </div>
+
+                        <div class="row gx-3 mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="FlatNo" class="small mb-1"></label>
+                                <input asp-for="FlatNo" class="form-control" disabled />
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="BuildingNo" class="small mb-1"></label>
+                                <input asp-for="BuildingNo" class="form-control" disabled />
+                            </div>                         
+                        </div>
+
+                        <div class="row gx-3 mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Street" class="small mb-1"></label>
+                                <input asp-for="Street" class="form-control" disabled />
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="City" class="small mb-1"></label>
+                                <input asp-for="City" class="form-control" disabled />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PostalCode" class="small mb-1"></label>
+                            <input asp-for="PostalCode" class="form-control" disabled />
+                        </div>
+
+                        <div class="row gx-3 mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="PhoneNumber" class="small mb-1"></label>
+                                <input asp-for="PhoneNumber" class="form-control" disabled />
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
