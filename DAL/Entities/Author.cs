@@ -1,10 +1,17 @@
-﻿namespace CW2.DAL.Entities
+﻿using System;
+using System.Collections.Generic;
+
+namespace CW2.DAL.Entities;
+
+public partial class Author
 {
-    public class Author
-    {
-        public int? AuthorId;
-        public string? FirstName;
-        public string? LastName;
-        public string? CompanyName;
-    }
+    public int AuthorId { get; set; }
+
+    public string? FirstName { get; set; }
+
+    public string? LastName { get; set; }
+
+    public string? CompanyName { get; set; }
+
+    public virtual ICollection<Book> Books { get; set; } = new List<Book>();
 }

@@ -6,6 +6,7 @@ using CW2.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 namespace CW2.Controllers
 {
@@ -38,6 +39,29 @@ namespace CW2.Controllers
             var models = entities.Select(e => _mapper.Map<CustomerViewModel>(e));
 
             return View(models);
+        }
+
+        public ActionResult Filter(CustomerFilterViewModel filter)
+        {
+            var result = _customerRepository.Filter(
+                filter.FirstName, 
+                filter.LastName, 
+                filter.PostalCode, 
+                filter.City,
+                filter.Street,
+                filter.FlatNo,
+                filter.BuildingNo,
+                filter.PhoneNumber,
+                filter.Page,
+                filter.PageSize,
+                filter.SortColumn,
+                filter.SortDesc
+            );
+
+            var models = result.Items.Select(e => _mapper.Map<CustomerViewModel>(e));
+            filter.Customers = models;
+
+            return View(filter);
         }
 
         // GET: CustomerController/Details/5
@@ -76,6 +100,9 @@ namespace CW2.Controllers
                 var hasher = new PasswordHasher<CustomerViewModel>();
                 model.PasswordHash = hasher.HashPassword(model, model.PasswordHash);
 
+                // remove hyphens from phone number
+                model.PhoneNumber = model.PhoneNumber?.Replace("-", "").Trim();
+
                 var customer = _mapper.Map<Customer>(model);
                 var insertedCustomer = _customerRepository.Insert(customer);
                 
@@ -104,24 +131,48 @@ namespace CW2.Controllers
         {
             try
             {
+                
+
+                var existingCustomer = _customerRepository.GetById(id);
+                if (existingCustomer == null)
+                    return NotFound();
+
+                // remove hyphens from phone number
+                model.PhoneNumber = model.PhoneNumber?.Replace("-", "").Trim();
+
+                var originalPasswordHash = existingCustomer.PasswordHash;
+
+
                 if (imageFile != null && imageFile.Length > 0)
                 {
-                    using (var stream = new MemoryStream())
-                    {
-                        await imageFile.CopyToAsync(stream);
-                        // Save the file bytes to the database or process it as needed
-                        var fileBytes = stream.ToArray();
-                        // Example: Save fileBytes to customer's profile image property
-                        model.ProfilePic = fileBytes;
-                    }
+                    using var stream = new MemoryStream();
+                    await imageFile.CopyToAsync(stream);
+                    model.ProfilePic = stream.ToArray();
+                }
+                else
+                {
+                    model.ProfilePic = existingCustomer.ProfilePic;
                 }
 
-                var customer = _mapper.Map<Customer>(model);
+                _mapper.Map(model, existingCustomer);
 
-                _customerRepository.Update(customer);
+                
 
+                if (!string.IsNullOrWhiteSpace(model.PasswordHash))
+                {
+                    var hasher = new PasswordHasher<CustomerViewModel>();
+                    existingCustomer.PasswordHash = hasher.HashPassword(model, model.PasswordHash);
+                }
+                else
+                {
+                    existingCustomer.PasswordHash = originalPasswordHash;
+                }
+
+                _customerRepository.Update(existingCustomer);
 
                 return RedirectToAction(nameof(Index));
+
+
             }
             catch (Exception ex)
             {
@@ -154,5 +205,11 @@ namespace CW2.Controllers
                 return View();
             }
         }
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            _customerRepository.Dispose();
+        }
     }
+    
 }

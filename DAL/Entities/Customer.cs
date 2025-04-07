@@ -1,21 +1,41 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Collections.Generic;
 
-namespace CW2.DAL.Entities
+namespace CW2.DAL.Entities;
+
+public partial class Customer
 {
-    public class Customer
-    {
-        public long? CustomerId { get; set; } = null;
-        public required string FirstName { get; set; }
-        public required string LastName { get; set; }
-        public byte[]? ProfilePic { get; set; }
-        public required string Login { get; set; }
-        public required string PasswordHash { get; set; }
-        public required string PostalCode { get; set; }
-        public required string Street { get; set; }
-        public required string BuildingNo { get; set; }
-        public string? FlatNo { get; set; }
-        public required string City { get; set; }
-        public string? Tin { get; set; }  // Tax identification number
-        public required string PhoneNumber { get; set; }
-    }
+    public long CustomerId { get; set; }
+
+    public string FirstName { get; set; } = null!;
+
+    public string LastName { get; set; } = null!;
+
+    public DateTime? BirthDate { get; set; }
+
+    public byte[]? ProfilePic { get; set; }
+
+    public string Login { get; set; } = null!;
+
+    public string PasswordHash { get; set; } = null!;
+
+    public string? PostalCode { get; set; }
+
+    public string? Street { get; set; }
+
+    public string? BuildingNo { get; set; }
+
+    public string? FlatNo { get; set; }
+
+    public string? City { get; set; }
+
+    public string PhoneNumber { get; set; } = null!;
+
+    public bool AcceptsMarketing { get; set; }
+
+    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+
+    public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+
+    public virtual ICollection<Discount> Discounts { get; set; } = new List<Discount>();
 }

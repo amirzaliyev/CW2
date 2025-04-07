@@ -1,0 +1,130 @@
+﻿@model CW2.Models.CustomerFilterViewModel
+
+@{
+    ViewData["Title"] = "Customer Filter";
+}
+
+<div class="container-xl px-4 mt-4">
+    <div class="card mb-4">
+        <div class="card-header">Filter Customers</div>
+        <div class="card-body">
+            <form asp-action="Filter" asp-controller="Customer" method="get">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="row gx-3 mb-3">
+                    <div class="col-md-4">
+                        <label asp-for="FirstName" class="form-label"></label>
+                        <input asp-for="FirstName" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="LastName" class="form-label"></label>
+                        <input asp-for="LastName" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="PhoneNumber" class="form-label"></label>
+                        <input asp-for="PhoneNumber" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="row gx-3 mb-3">
+                    <div class="col-md-2">
+                        <label asp-for="FlatNo" class="form-label"></label>
+                        <input asp-for="FlatNo" class="form-control" />
+                    </div>
+                    <div class="col-md-2">
+                        <label asp-for="BuildingNo" class="form-label"></label>
+                        <input asp-for="BuildingNo" class="form-control" />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="Street" class="form-label"></label>
+                        <input asp-for="Street" class="form-control" />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="City" class="form-label"></label>
+                        <input asp-for="City" class="form-control" />
+                    </div>
+                    <div class="col-md-2">
+                        <label asp-for="PostalCode" class="form-label"></label>
+                        <input asp-for="PostalCode" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="row gx-3 mb-3 align-items-center">
+                    <div class="col-md-2">
+                        <label asp-for="PageSize" class="form-label">Page Size</label>
+                        <input asp-for="PageSize" type="number" min="1" class="form-control" />
+                    </div>
+                    <div class="col-md-2 align-self-end">
+                        <button type="submit" class="btn btn-primary w-100">Filter</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <h3>Customer Results</h3>
+
+    @if (Model.Customers != null && Model.Customers.Any())
+    {
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr class="text-center">
+                    <th>Profile Picture</th>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>City</th>
+                    <th>Postal Code</th>
+                    <th>Phone Number</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var customer in Model.Customers)
+                {
+                    <tr class="text-center align-middle">
+                        <td>
+                            <img src="@(customer.ProfilePic != null && customer.ProfilePic.Length > 0
+                                ? Url.Action("GetImage", "Customer", new { id = customer.CustomerId })
+                                : Url.Content("~/Content/imgs/defaultProfilePic.jpg"))"
+                                 width="48" height="48" class="rounded-circle" alt="Profile photo" />
+                        </td>
+                        <td>@customer.CustomerId</td>
+                        <td>@customer.FirstName @customer.LastName</td>
+                        <td>
+                            @($"{customer.FlatNo ?? "-"}, {customer.BuildingNo ?? "-"} {customer.Street ?? "-"}")
+                        </td>
+                        <td>@customer.City</td>
+                        <td>@customer.PostalCode</td>
+                        <td>@customer.PhoneNumber</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@customer.CustomerId" class="btn btn-sm btn-warning">Edit</a>
+                            <a asp-action="Details" asp-route-id="@customer.CustomerId" class="btn btn-sm btn-info">Details</a>
+                            <a asp-action="Delete" asp-route-id="@customer.CustomerId" class="btn btn-sm btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <nav aria-label="Pagination">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(Model.Page <= 1 ? "disabled" : "")">
+                    <a class="page-link" asp-action="Filter" asp-route-Page="@(Model.Page - 1)" asp-route-PageSize="@Model.PageSize">&laquo; Prev</a>
+                </li>
+
+                <li class="page-item active">
+                    <span class="page-link">@Model.Page</span>
+                </li>
+
+                <li class="page-item @(Model.Customers.Count() < Model.PageSize ? "disabled" : "")">
+                    <a class="page-link" asp-action="Filter" asp-route-Page="@(Model.Page + 1)" asp-route-PageSize="@Model.PageSize">Next &raquo;</a>
+                </li>
+            </ul>
+        </nav>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">No customers found matching the criteria.</div>
+    }
+</div>

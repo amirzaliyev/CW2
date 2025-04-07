@@ -1,8 +1,13 @@
-﻿namespace CW2.DAL.Entities
+﻿using System;
+using System.Collections.Generic;
+
+namespace CW2.DAL.Entities;
+
+public partial class Publisher
 {
-    public class Publisher
-    {
-        public int? PublisherId;
-        public required string PublisherName;
-    }
+    public int PublisherId { get; set; }
+
+    public string PublisherName { get; set; } = null!;
+
+    public virtual ICollection<Book> Books { get; set; } = new List<Book>();
 }

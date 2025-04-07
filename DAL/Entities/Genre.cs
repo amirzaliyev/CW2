@@ -1,8 +1,13 @@
-﻿namespace CW2.DAL.Entities
+﻿using System;
+using System.Collections.Generic;
+
+namespace CW2.DAL.Entities;
+
+public partial class Genre
 {
-    public class Genre
-    {
-        public int? GenreId;
-        public required string GenreName;
-    }
+    public int GenreId { get; set; }
+
+    public string GenreName { get; set; } = null!;
+
+    public virtual ICollection<Book> Books { get; set; } = new List<Book>();
 }
